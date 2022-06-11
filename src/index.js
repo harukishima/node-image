@@ -16,6 +16,12 @@ const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again in a minute'
 })
 
+const dir = path.join(process.cwd(), 'public/images');
+
+if (!fs.existsSync(dir)){
+  fs.mkdirSync(dir, { recursive: true });
+}
+
 app.use(cors());
 app.use(express.json());
 
@@ -35,9 +41,6 @@ const upload = multer({
 
 app.post('/', apiLimiter, upload.single('file'), async function (req, res) {
   const imagePath = path.join(process.cwd(), '/public/images');
-  if (!fs.existsSync(imagePath)){
-    fs.mkdirSync(imagePath, { recursive: true });
-}
   const fileUpload = new Resize(imagePath);
   if (!req.file) {
       res.status(401).json({error: 'Please provide an image'});
@@ -46,6 +49,8 @@ app.post('/', apiLimiter, upload.single('file'), async function (req, res) {
   
   return res.status(200).json({ name: filename });
 });
+
+app.use(express.static(dir));
 
 app.use(function(req, res, next) {
   res.status(404).json({
