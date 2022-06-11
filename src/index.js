@@ -5,6 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const Resize = require('./Resize');
 const rateLimit = require('express-rate-limit');
+const morgan = require('morgan');
 var fs = require('fs');
 require('dotenv').config();
 
@@ -22,6 +23,7 @@ if (!fs.existsSync(dir)){
   fs.mkdirSync(dir, { recursive: true });
 }
 
+app.use(morgan('combined'));
 app.use(cors());
 app.use(express.json());
 
@@ -39,7 +41,7 @@ const upload = multer({
   storage: multer.memoryStorage()
 });
 
-app.post('/', apiLimiter, upload.single('file'), async function (req, res) {
+app.post('/', upload.single('file'), async function (req, res) {
   const imagePath = path.join(process.cwd(), '/public/images');
   const fileUpload = new Resize(imagePath);
   if (!req.file) {
