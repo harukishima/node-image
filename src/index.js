@@ -49,7 +49,7 @@ app.post('/', upload.single('file'), async function (req, res) {
   }
   const filename = await fileUpload.save(req.file.buffer);
   
-  return res.status(200).json({ name: filename });
+  return res.status(200).json({ filename });
 });
 
 app.use(express.static(dir));
