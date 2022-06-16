@@ -27,10 +27,12 @@ app.use(morgan('combined'));
 app.use(cors());
 app.use(express.json());
 
+const supportedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'jfif', 'avif', 'tiff', 'tif', 'svg'];
+
 const upload = multer({
   fileFilter: function (req, file, callback) {
     const ext = path.extname(file.originalname);
-      if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+      if(!supportedExtensions.includes(ext.slice(1).toLowerCase())) {
           return callback(new Error('Only images are allowed'))
       }
       callback(null, true)
